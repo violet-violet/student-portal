@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 const people = [
   {
     "_id": "5630ecd066d7e7e5a488e73e",
