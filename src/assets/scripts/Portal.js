@@ -5,21 +5,12 @@ export default class Portal {
     this.isStatistics = true;
     this.studentData = data;
     this.mainContainer = document.querySelector('main');
-    // this.statContainer =
+    this.statContainer = create('div', 'statistics');
   }
 
-  // getTotalSatistics() {
-
-  // }
-
-  // getAverageStatistics() {
-
-  // }
-
-  renderStatistics() {
-    const statContainer = create('div', 'statistics');
+  getTotalSatistics() {
     const studentNumber = this.studentData.length;
-    create('div', 'statistics__item', `Students total: ${studentNumber}`, statContainer);
+    create('div', 'statistics__item', `Students total: ${studentNumber}`, this.statContainer);
 
     let menNumber = 0;
     let womenNumber = 0;
@@ -34,38 +25,43 @@ export default class Portal {
       return item;
     });
 
-    create('div', 'statistics__item', `Man total: ${menNumber}`, statContainer);
-    create('div', 'statistics__item', `Women total: ${womenNumber}`, statContainer);
+    create('div', 'statistics__item', `Man total: ${menNumber}`, this.statContainer);
+    create('div', 'statistics__item', `Women total: ${womenNumber}`, this.statContainer);
+  }
 
+  getAverageValue(value) {
     const listOfGroupsWithDuplicates = this.studentData.map((student) => student.group);
     const listOfGroups = Array.from(new Set(listOfGroupsWithDuplicates));
-    const studentNumberInGroup = listOfGroups.map((groupNumber) => {
-      const groupArray = this.studentData.filter((student) => student.group === groupNumber);
+
+    const valueNumberInGroup = listOfGroups.map((groupNumber) => {
+      const groupArray = this.studentData.filter((student) => {
+        switch (value) {
+          case 'students':
+            return student.group === groupNumber;
+          case 'men':
+            return student.group === groupNumber && student.gender === 'm';
+          default:
+            return student.group === groupNumber && student.gender === 'f';
+        }
+      });
       return groupArray.length;
     });
-    const averageStudentsInGroup = (studentNumberInGroup
-      .reduce((sum, currentGroup) => sum + currentGroup)) / studentNumberInGroup.length;
-    create('div', 'statistics__item', `Average amount of students in a group: ${Math.round(averageStudentsInGroup)}`, statContainer);
 
-    const menNumberInGroup = listOfGroups.map((groupNumber) => {
-      const groupArray = this.studentData
-        .filter((student) => student.group === groupNumber && student.gender === 'm');
-      return groupArray.length;
-    });
-    const averageMenNumberInGroup = (menNumberInGroup
-      .reduce((sum, currentGroup) => sum + currentGroup)) / menNumberInGroup.length;
-    create('div', 'statistics__item', `Average amount of men in a group: ${Math.round(averageMenNumberInGroup)}`, statContainer);
+    const averageValue = (valueNumberInGroup
+      .reduce((sum, currentGroup) => sum + currentGroup)) / valueNumberInGroup.length;
+    return Math.round(averageValue);
+  }
 
-    const womenNumberInGroup = listOfGroups.map((groupNumber) => {
-      const groupArray = this.studentData
-        .filter((student) => student.group === groupNumber && student.gender === 'f');
-      return groupArray.length;
-    });
-    const averageWomenNumberInGroup = (womenNumberInGroup
-      .reduce((sum, currentGroup) => sum + currentGroup)) / womenNumberInGroup.length;
-    create('div', 'statistics__item', `Average amount of men in a group: ${Math.round(averageWomenNumberInGroup)}`, statContainer);
+  getAverageStatistics() {
+    create('div', 'statistics__item', `Average amount of students in a group: ${this.getAverageValue('students')}`, this.statContainer);
+    create('div', 'statistics__item', `Average amount of men in a group: ${this.getAverageValue('men')}`, this.statContainer);
+    create('div', 'statistics__item', `Average amount of women in a group: ${this.getAverageValue('women')}`, this.statContainer);
+  }
 
-    this.mainContainer.append(statContainer);
+  renderStatistics() {
+    this.getTotalSatistics();
+    this.getAverageStatistics();
+    this.mainContainer.append(this.statContainer);
   }
 
   init() {
