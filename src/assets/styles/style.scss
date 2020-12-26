@@ -17,6 +17,10 @@ $color-coral-light: #ffcbb8;
     background-color: $color-coral-light;
     cursor: pointer;
   }
+
+  &[disabled] {
+    color: black;
+  }
 }
 
 .btn_active {
