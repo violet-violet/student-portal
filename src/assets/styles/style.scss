@@ -1,10 +1,12 @@
 $color-coral: #ff7f50;
 $color-coral-light: #ffcbb8;
+$color-coral-light-xl: #ffece5;
+$color-coral-dark: #b83100;
 
 .container {
   display: flex;
   flex-direction: column;
-  margin: 10%;
+  margin: 0 10% 10%;
 }
 
 .btn {
@@ -38,4 +40,25 @@ $color-coral-light: #ffcbb8;
 
 .statistics__item {
   margin: 10px 0;
+}
+
+.management {
+  margin-top: 20px;
+}
+
+.management__table {
+  border-collapse: collapse; 
+  line-height: 1.1;
+
+  th {
+    font-size: 1.1em;
+    padding: 10px; 
+    border: 1px solid $color-coral-light;
+    background-color: $color-coral-light-xl;
+  }
+
+  td {
+    padding: 5px 7px;
+    border: 1px solid $color-coral-light;
+  }
 }
