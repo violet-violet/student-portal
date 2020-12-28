@@ -6,6 +6,7 @@ export default class Portal {
     this.studentData = data;
     this.mainContainer = document.querySelector('main');
     this.statContainer = create('div', 'statistics');
+    this.manageContainer = create('div', 'management');
     this.btnStatistics = document.getElementById('btn-stats');
     this.btnManagement = document.getElementById('btn-manage');
   }
@@ -19,6 +20,7 @@ export default class Portal {
         this.btnStatistics.setAttribute('disabled', '');
         this.btnManagement.removeAttribute('disabled');
         this.renderStatistics();
+        this.clearTab('management');
       }
     });
     this.btnManagement.addEventListener('click', () => {
@@ -26,7 +28,7 @@ export default class Portal {
       if (isToggled) {
         this.btnManagement.setAttribute('disabled', '');
         this.btnStatistics.removeAttribute('disabled');
-
+        this.renderManagement();
         this.clearTab('statistics');
       }
     });
@@ -100,11 +102,59 @@ export default class Portal {
     return false;
   }
 
-  // renderManagement() {
-
-  // }
-
   clearTab(tabClass) {
     this.mainContainer.querySelector(`.${tabClass}`).remove();
+  }
+
+  renderManagement() {
+    while (this.manageContainer.firstChild) {
+      this.manageContainer.firstChild.remove();
+    }
+
+    this.studentData.sort((a, b) => {
+      const aName = a.name.last.toLowerCase();
+      const bName = b.name.last.toLowerCase();
+      if (aName < bName) {
+        return -1;
+      }
+      if (aName > bName) {
+        return 1;
+      }
+      return 0;
+    });
+
+    this.renderManageTable();
+
+    this.mainContainer.append(this.manageContainer);
+  }
+
+  renderManageTable() {
+    // Table header
+    const trHeadElement = create('tr', '');
+    const theadTitles = ['Last name', 'First name', 'Group', 'Age', 'Gender'];
+    theadTitles.forEach((title) => create('th', '', title, trHeadElement));
+    const theadElement = create('thead', '', trHeadElement);
+    const table = create('table', 'management__table', theadElement, this.manageContainer);
+
+    // Table body
+    const tbody = create('tbody', '');
+    this.studentData.forEach((student) => {
+      const currentTrElement = create('tr', '');
+      create('td', '', student.name.last, currentTrElement);
+      create('td', '', student.name.first, currentTrElement);
+      create('td', '', `${student.group}`, currentTrElement);
+      create('td', '', `${student.age}`, currentTrElement);
+
+      if (student.gender === 'm') {
+        create('td', '', 'male', currentTrElement);
+      }
+      if (student.gender === 'f') {
+        create('td', '', 'female', currentTrElement);
+      }
+
+      tbody.append(currentTrElement);
+    });
+
+    table.append(tbody);
   }
 }
