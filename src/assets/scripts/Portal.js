@@ -129,9 +129,11 @@ export default class Portal {
   }
 
   renderManageTable() {
+    create('button', 'btn btn_adding', 'Add student', this.manageContainer);
+
     // Table header
     const trHeadElement = create('tr', '');
-    const theadTitles = ['Last name', 'First name', 'Group', 'Age', 'Gender'];
+    const theadTitles = ['Last name', 'First name', 'Group', 'Age', 'Gender', 'Management'];
     theadTitles.forEach((title) => create('th', '', title, trHeadElement));
     const theadElement = create('thead', '', trHeadElement);
     const table = create('table', 'management__table', theadElement, this.manageContainer);
@@ -151,6 +153,10 @@ export default class Portal {
       if (student.gender === 'f') {
         create('td', '', 'female', currentTrElement);
       }
+
+      const deleteButton = create('button', 'btn btn_func', 'Delete');
+      const changeButton = create('button', 'btn btn_func', 'Change');
+      create('td', '', [changeButton, deleteButton], currentTrElement);
 
       tbody.append(currentTrElement);
     });

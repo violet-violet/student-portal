@@ -34,6 +34,27 @@ $color-coral-dark: #b83100;
   }
 }
 
+.btn_func {
+  background-color: $color-coral-light-xl;
+
+  &:nth-child(2) {
+    margin-left: 5px;
+  }
+
+  &:hover {
+    background-color: $color-coral-light;
+  }
+}
+
+.btn_adding {
+  margin-bottom: 10px;
+  background-color: $color-coral-light;
+
+  &:hover {
+    background-color: $color-coral;
+  }
+}
+
 .statistics {
   margin: 15px 0;
 }
