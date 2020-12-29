@@ -144,7 +144,7 @@ export default class Portal {
 
     // Table body
     const tbody = create('tbody', '');
-    this.studentData.forEach((student) => {
+    this.studentData.forEach((student, index) => {
       const currentTrElement = create('tr', '');
       create('td', '', student.name.last, currentTrElement);
       create('td', '', student.name.first, currentTrElement);
@@ -159,6 +159,11 @@ export default class Portal {
       }
 
       const deleteButton = create('button', 'btn btn_func', 'Delete');
+      deleteButton.addEventListener('click', () => {
+        this.studentData.splice(index, 1);
+        currentTrElement.remove();
+      });
+
       const changeButton = create('button', 'btn btn_func', 'Change');
       buttonsWithModalWindow.push(changeButton);
       create('td', '', [changeButton, deleteButton], currentTrElement);
@@ -175,4 +180,8 @@ export default class Portal {
 
     table.append(tbody);
   }
+
+  // deleteStudent() {
+
+  // }
 }
