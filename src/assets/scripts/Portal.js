@@ -129,7 +129,11 @@ export default class Portal {
   }
 
   renderManageTable() {
-    create('button', 'btn btn_adding', 'Add student', this.manageContainer);
+    const addingButton = create('button', 'btn btn_adding', 'Add student', this.manageContainer);
+    const modalWindow = document.querySelector('#modal-window');
+    const modalOverlay = document.querySelector('#modal-overlay');
+    const closeButton = document.querySelector('#close-button');
+    const buttonsWithModalWindow = [addingButton, closeButton];
 
     // Table header
     const trHeadElement = create('tr', '');
@@ -156,9 +160,17 @@ export default class Portal {
 
       const deleteButton = create('button', 'btn btn_func', 'Delete');
       const changeButton = create('button', 'btn btn_func', 'Change');
+      buttonsWithModalWindow.push(changeButton);
       create('td', '', [changeButton, deleteButton], currentTrElement);
 
       tbody.append(currentTrElement);
+    });
+
+    buttonsWithModalWindow.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        modalWindow.classList.toggle('closed');
+        modalOverlay.classList.toggle('closed');
+      });
     });
 
     table.append(tbody);
