@@ -34,7 +34,8 @@ $color-coral-dark: #b83100;
   }
 }
 
-.btn_func {
+.btn_change, 
+.btn_delete {
   background-color: $color-coral-light-xl;
 
   &:nth-child(2) {

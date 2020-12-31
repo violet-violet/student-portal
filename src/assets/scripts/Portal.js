@@ -13,25 +13,57 @@ export default class Portal {
 
   init() {
     this.renderStatistics();
+    this.addTabButtonListener(this.btnStatistics);
+    this.addTabButtonListener(this.btnManagement);
 
-    this.btnStatistics.addEventListener('click', () => {
-      const isToggled = this.toggleActiveBtn(this.btnStatistics);
+  //   this.btnStatistics.addEventListener('click', () => {
+  //     const isToggled = this.toggleActiveBtn(this.btnStatistics);
+  //     if (isToggled) {
+  //       this.btnStatistics.setAttribute('disabled', '');
+  //       this.btnManagement.removeAttribute('disabled');
+  //       this.renderStatistics();
+  //       this.clearTab('management');
+  //     }
+  //   });
+  //   this.btnManagement.addEventListener('click', () => {
+  //     const isToggled = this.toggleActiveBtn(this.btnManagement);
+  //     if (isToggled) {
+  //       this.btnManagement.setAttribute('disabled', '');
+  //       this.btnStatistics.removeAttribute('disabled');
+  //       this.renderManagement();
+  //       this.clearTab('statistics');
+  //     }
+  //   });
+  // }
+  }
+
+  addTabButtonListener(button) {
+    const anotherTabBtn = button === this.btnStatistics ? this.btnManagement : this.btnStatistics;
+
+    button.addEventListener('click', () => {
+      const isToggled = this.toggleActiveBtn(button);
       if (isToggled) {
-        this.btnStatistics.setAttribute('disabled', '');
-        this.btnManagement.removeAttribute('disabled');
-        this.renderStatistics();
-        this.clearTab('management');
+        button.setAttribute('disabled', '');
+        anotherTabBtn.removeAttribute('disabled');
+        if (button === this.btnStatistics) {
+          this.renderStatistics();
+          this.clearTab('management');
+        }
+        if (button === this.btnManagement) {
+          this.renderManagement();
+          this.clearTab('statistics');
+        }
       }
     });
-    this.btnManagement.addEventListener('click', () => {
-      const isToggled = this.toggleActiveBtn(this.btnManagement);
-      if (isToggled) {
-        this.btnManagement.setAttribute('disabled', '');
-        this.btnStatistics.removeAttribute('disabled');
-        this.renderManagement();
-        this.clearTab('statistics');
-      }
-    });
+    // this.btnManagement.addEventListener('click', () => {
+    //   const isToggled = this.toggleActiveBtn(this.btnManagement);
+    //   if (isToggled) {
+    //     this.btnManagement.setAttribute('disabled', '');
+    //     this.btnStatistics.removeAttribute('disabled');
+    //     this.renderManagement();
+    //     this.clearTab('statistics');
+    //   }
+    // });
   }
 
   renderStatistics() {
@@ -124,8 +156,8 @@ export default class Portal {
     });
 
     this.renderManageTable();
-
     this.mainContainer.append(this.manageContainer);
+    // this.changeStudent();
   }
 
   renderManageTable() {
@@ -158,13 +190,13 @@ export default class Portal {
         create('td', '', 'female', currentTrElement);
       }
 
-      const deleteButton = create('button', 'btn btn_func', 'Delete');
+      const deleteButton = create('button', 'btn btn_delete', 'Delete');
       deleteButton.addEventListener('click', () => {
         this.studentData.splice(index, 1);
         currentTrElement.remove();
       });
 
-      const changeButton = create('button', 'btn btn_func', 'Change');
+      const changeButton = create('button', 'btn btn_change', 'Change');
       buttonsWithModalWindow.push(changeButton);
       create('td', '', [changeButton, deleteButton], currentTrElement);
 
@@ -181,7 +213,12 @@ export default class Portal {
     table.append(tbody);
   }
 
-  // deleteStudent() {
+  changeStudent() {
+    const changeButtonsArr = this.statContainer.querySelectorAll('.btn_change');
+    changeButtonsArr.forEach((btn) => {
+      btn.addEventListener('click', () => {
 
-  // }
+      });
+    });
+  }
 }
