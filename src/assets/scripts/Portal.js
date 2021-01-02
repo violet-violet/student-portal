@@ -1,40 +1,24 @@
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable class-methods-use-this */
+import { v4 as uuidv4 } from 'uuid';
 import create from './utils/create';
 
 export default class Portal {
   constructor(data) {
-    this.isStatistics = true;
     this.studentData = data;
     this.mainContainer = document.querySelector('main');
     this.statContainer = create('div', 'statistics');
     this.manageContainer = create('div', 'management');
     this.btnStatistics = document.getElementById('btn-stats');
     this.btnManagement = document.getElementById('btn-manage');
+    this.modalWindowContent = document.querySelector('#modal-content');
   }
 
   init() {
     this.renderStatistics();
     this.addTabButtonListener(this.btnStatistics);
     this.addTabButtonListener(this.btnManagement);
-
-  //   this.btnStatistics.addEventListener('click', () => {
-  //     const isToggled = this.toggleActiveBtn(this.btnStatistics);
-  //     if (isToggled) {
-  //       this.btnStatistics.setAttribute('disabled', '');
-  //       this.btnManagement.removeAttribute('disabled');
-  //       this.renderStatistics();
-  //       this.clearTab('management');
-  //     }
-  //   });
-  //   this.btnManagement.addEventListener('click', () => {
-  //     const isToggled = this.toggleActiveBtn(this.btnManagement);
-  //     if (isToggled) {
-  //       this.btnManagement.setAttribute('disabled', '');
-  //       this.btnStatistics.removeAttribute('disabled');
-  //       this.renderManagement();
-  //       this.clearTab('statistics');
-  //     }
-  //   });
-  // }
+    this.addManageTableListeners();
   }
 
   addTabButtonListener(button) {
@@ -45,6 +29,7 @@ export default class Portal {
       if (isToggled) {
         button.setAttribute('disabled', '');
         anotherTabBtn.removeAttribute('disabled');
+
         if (button === this.btnStatistics) {
           this.renderStatistics();
           this.clearTab('management');
@@ -55,15 +40,6 @@ export default class Portal {
         }
       }
     });
-    // this.btnManagement.addEventListener('click', () => {
-    //   const isToggled = this.toggleActiveBtn(this.btnManagement);
-    //   if (isToggled) {
-    //     this.btnManagement.setAttribute('disabled', '');
-    //     this.btnStatistics.removeAttribute('disabled');
-    //     this.renderManagement();
-    //     this.clearTab('statistics');
-    //   }
-    // });
   }
 
   renderStatistics() {
@@ -157,13 +133,10 @@ export default class Portal {
 
     this.renderManageTable();
     this.mainContainer.append(this.manageContainer);
-    // this.changeStudent();
   }
 
   renderManageTable() {
     const addingButton = create('button', 'btn btn_adding', 'Add student', this.manageContainer);
-    const modalWindow = document.querySelector('#modal-window');
-    const modalOverlay = document.querySelector('#modal-overlay');
     const closeButton = document.querySelector('#close-button');
     const buttonsWithModalWindow = [addingButton, closeButton];
 
@@ -176,8 +149,8 @@ export default class Portal {
 
     // Table body
     const tbody = create('tbody', '');
-    this.studentData.forEach((student, index) => {
-      const currentTrElement = create('tr', '');
+    this.studentData.forEach((student) => {
+      const currentTrElement = create('tr', '', null, null, ['id', `${student._id}`]);
       create('td', '', student.name.last, currentTrElement);
       create('td', '', student.name.first, currentTrElement);
       create('td', '', `${student.group}`, currentTrElement);
@@ -191,11 +164,6 @@ export default class Portal {
       }
 
       const deleteButton = create('button', 'btn btn_delete', 'Delete');
-      deleteButton.addEventListener('click', () => {
-        this.studentData.splice(index, 1);
-        currentTrElement.remove();
-      });
-
       const changeButton = create('button', 'btn btn_change', 'Change');
       buttonsWithModalWindow.push(changeButton);
       create('td', '', [changeButton, deleteButton], currentTrElement);
@@ -203,22 +171,101 @@ export default class Portal {
       tbody.append(currentTrElement);
     });
 
-    buttonsWithModalWindow.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        modalWindow.classList.toggle('closed');
-        modalOverlay.classList.toggle('closed');
-      });
-    });
-
     table.append(tbody);
   }
 
-  changeStudent() {
-    const changeButtonsArr = this.statContainer.querySelectorAll('.btn_change');
-    changeButtonsArr.forEach((btn) => {
-      btn.addEventListener('click', () => {
+  addManageTableListeners() {
+    document.addEventListener('click', (event) => {
+      const currentTR = event.target.closest('tr');
 
-      });
+      if (event.target.classList.contains('btn_delete')) {
+        const studentId = currentTR.id;
+        const studentIndex = this.studentData.findIndex((student) => student._id === studentId);
+        this.studentData.splice(studentIndex, 1);
+        currentTR.remove();
+      }
+
+      if (event.target.classList.contains('btn_adding')) {
+        const formHtml = '<h2 class="modal-window__title">Add student</h2><form><p><label>First name</label><input type="text" name="first_name"></p><p><label>Last name</label><input type="text" name="last_name"></p><p><label>Gender</label><select name="Gender"><option>male</option><option>female</option></select></p><p><label>Group</label><input type="number" name="group"></p><p><label>Age</label><input type="number" name="age"></p><button class="btn" id="form-add-student"> Add new student</button></form>';
+        this.modalWindowContent.insertAdjacentHTML('beforeend', formHtml);
+        this.toggleModalWindow();
+      }
+
+      if (event.target.id === 'form-add-student') {
+        event.preventDefault();
+        this.addNewStudent();
+        this.closeModalWindow();
+        this.renderManagement();
+      }
+
+      if (event.target.classList.contains('btn_change')) {
+        const studentId = currentTR.id;
+        const formHtml = `<h2 class="modal-window__title">Change student information</h2><form><input type="hidden" name="student-id" value="${studentId}"><p><label>First name</label><input type="text" name="first_name"></p><p><label>Last name</label><input type="text" name="last_name"></p><p><label>Gender</label><select name="Gender"><option>male</option><option>female</option></select></p><p><label>Group</label><input type="number" name="group"></p><p><label>Age</label><input type="number" name="age"></p><button class="btn" id="form-change-student">Save changings</button></form>`;
+        this.modalWindowContent.insertAdjacentHTML('beforeend', formHtml);
+        const currentStudent = this.studentData.find((student) => student._id === studentId);
+        document.querySelector('input[name="age"]').value = currentStudent.age;
+        document.querySelector('input[name="group"]').value = currentStudent.group;
+        document.querySelector('input[name="first_name"]').value = currentStudent.name.first;
+        document.querySelector('input[name="last_name"]').value = currentStudent.name.last;
+        document.querySelector('select[name="Gender"]').value = currentStudent.gender === 'm' ? 'male' : 'female';
+        this.toggleModalWindow();
+      }
+
+      if (event.target.id === 'form-change-student') {
+        event.preventDefault();
+        const studentId = document.querySelector('input[name="student-id"]').value;
+        this.changeStudentInfo(studentId);
+        this.closeModalWindow();
+        this.renderManagement();
+      }
+
+      if (event.target.classList.contains('close-button')) {
+        this.closeModalWindow();
+      }
     });
+  }
+
+  addNewStudent() {
+    const newStudent = {};
+    newStudent._id = `${uuidv4()}`;
+    this.assignValuesForStudent(newStudent);
+    this.studentData.push(newStudent);
+  }
+
+  assignValuesForStudent(student) {
+    const currentStudent = student;
+    currentStudent.age = document.querySelector('input[name="age"]').value;
+    currentStudent.group = document.querySelector('input[name="group"]').value;
+    if (!currentStudent.name) {
+      currentStudent.name = {};
+    }
+    currentStudent.name.first = document.querySelector('input[name="first_name"]').value;
+    currentStudent.name.last = document.querySelector('input[name="last_name"]').value;
+    const selectGender = document.querySelector('select[name="Gender"]').value;
+    currentStudent.gender = selectGender === 'male' ? 'm' : 'f';
+    return currentStudent;
+  }
+
+  changeStudentInfo(studentId) {
+    const currentStudent = this.studentData.find((student) => student._id === studentId);
+    this.assignValuesForStudent(currentStudent);
+  }
+
+  closeModalWindow() {
+    this.clearModalWindow();
+    this.toggleModalWindow();
+  }
+
+  toggleModalWindow() {
+    const modalWindow = document.querySelector('#modal-window');
+    const modalOverlay = document.querySelector('#modal-overlay');
+    modalWindow.classList.toggle('closed');
+    modalOverlay.classList.toggle('closed');
+  }
+
+  clearModalWindow() {
+    while (this.modalWindowContent.childNodes.length !== 2) {
+      this.modalWindowContent.lastChild.remove();
+    }
   }
 }

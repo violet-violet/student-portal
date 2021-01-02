@@ -14,6 +14,7 @@ module.exports = {
     'no-unused-vars': 'warn',
     'linebreak-style': ['warn', 'windows'],
     'object-curly-newline': ['warn', { multiline: true }],
+    'no-underscore-dangle': ['warn', { allow: ['foo_', '_bar'] }],
   },
   settings: { 'import/ignore': /\.css$/ },
 };
