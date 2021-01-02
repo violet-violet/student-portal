@@ -2,6 +2,7 @@
 /* eslint-disable class-methods-use-this */
 import { v4 as uuidv4 } from 'uuid';
 import create from './utils/create';
+import sortFunctions from './sort';
 
 export default class Portal {
   constructor(data) {
@@ -12,6 +13,7 @@ export default class Portal {
     this.btnStatistics = document.getElementById('btn-stats');
     this.btnManagement = document.getElementById('btn-manage');
     this.modalWindowContent = document.querySelector('#modal-content');
+    this.currentSortTableFunction = sortFunctions.lastNameToLastLetter;
   }
 
   init() {
@@ -118,19 +120,7 @@ export default class Portal {
     while (this.manageContainer.firstChild) {
       this.manageContainer.firstChild.remove();
     }
-
-    this.studentData.sort((a, b) => {
-      const aName = a.name.last.toLowerCase();
-      const bName = b.name.last.toLowerCase();
-      if (aName < bName) {
-        return -1;
-      }
-      if (aName > bName) {
-        return 1;
-      }
-      return 0;
-    });
-
+    this.studentData.sort(this.currentSortTableFunction);
     this.renderManageTable();
     this.mainContainer.append(this.manageContainer);
   }
@@ -143,7 +133,7 @@ export default class Portal {
     // Table header
     const trHeadElement = create('tr', '');
     const theadTitles = ['Last name', 'First name', 'Group', 'Age', 'Gender', 'Management'];
-    theadTitles.forEach((title) => create('th', '', title, trHeadElement));
+    theadTitles.forEach((title) => create('th', 'sorted-column', title, trHeadElement, ['id', `thead-${title}`]));
     const theadElement = create('thead', '', trHeadElement);
     const table = create('table', 'management__table', theadElement, this.manageContainer);
 
@@ -221,6 +211,67 @@ export default class Portal {
 
       if (event.target.classList.contains('close-button')) {
         this.closeModalWindow();
+      }
+
+      // if (event.target.classList.contains('sorted-column')) {
+      //   const sortingVariations = {
+      //     'thead-Last name': {
+      //       toLastValue: sortFunctions.lastNameToLastLetter,
+      //       toFirstValue: sortFunctions.lastNameToFirstLetter,
+      //     },
+      //   };
+      //   const currentColumnId = `${event.target.id}`;
+      //   if (this.currentSortTableFunction === sortingVariations[currentColumnId].toLastValue) {
+      //     this.currentSortTableFunction = sortingVariations[currentColumnId].toFirstValue;
+      //   } else {
+      //     this.currentSortTableFunction = sortingVariations[currentColumnId].toFirstValue;
+      //   }
+      //   this.renderManagement();
+      // }
+
+      if (event.target.id === 'thead-Last name') {
+        if (this.currentSortTableFunction === sortFunctions.lastNameToLastLetter) {
+          this.currentSortTableFunction = sortFunctions.lastNameToFirstLetter;
+        } else {
+          this.currentSortTableFunction = sortFunctions.lastNameToLastLetter;
+        }
+        this.renderManagement();
+      }
+
+      if (event.target.id === 'thead-First name') {
+        if (this.currentSortTableFunction === sortFunctions.firstNameToLastLetter) {
+          this.currentSortTableFunction = sortFunctions.firstNameToFirstLetter;
+        } else {
+          this.currentSortTableFunction = sortFunctions.firstNameToLastLetter;
+        }
+        this.renderManagement();
+      }
+
+      if (event.target.id === 'thead-Group') {
+        if (this.currentSortTableFunction === sortFunctions.groupToMax) {
+          this.currentSortTableFunction = sortFunctions.groupToMin;
+        } else {
+          this.currentSortTableFunction = sortFunctions.groupToMax;
+        }
+        this.renderManagement();
+      }
+
+      if (event.target.id === 'thead-Age') {
+        if (this.currentSortTableFunction === sortFunctions.ageToMax) {
+          this.currentSortTableFunction = sortFunctions.ageToMin;
+        } else {
+          this.currentSortTableFunction = sortFunctions.ageToMax;
+        }
+        this.renderManagement();
+      }
+
+      if (event.target.id === 'thead-Gender') {
+        if (this.currentSortTableFunction === sortFunctions.genderToMale) {
+          this.currentSortTableFunction = sortFunctions.genderToFemale;
+        } else {
+          this.currentSortTableFunction = sortFunctions.genderToMale;
+        }
+        this.renderManagement();
       }
     });
   }
