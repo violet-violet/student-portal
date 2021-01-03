@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable class-methods-use-this */
 import { v4 as uuidv4 } from 'uuid';
@@ -213,65 +214,24 @@ export default class Portal {
         this.closeModalWindow();
       }
 
-      // if (event.target.classList.contains('sorted-column')) {
-      //   const sortingVariations = {
-      //     'thead-Last name': {
-      //       toLastValue: sortFunctions.lastNameToLastLetter,
-      //       toFirstValue: sortFunctions.lastNameToFirstLetter,
-      //     },
-      //   };
-      //   const currentColumnId = `${event.target.id}`;
-      //   if (this.currentSortTableFunction === sortingVariations[currentColumnId].toLastValue) {
-      //     this.currentSortTableFunction = sortingVariations[currentColumnId].toFirstValue;
-      //   } else {
-      //     this.currentSortTableFunction = sortingVariations[currentColumnId].toFirstValue;
-      //   }
-      //   this.renderManagement();
-      // }
-
       if (event.target.id === 'thead-Last name') {
-        if (this.currentSortTableFunction === sortFunctions.lastNameToLastLetter) {
-          this.currentSortTableFunction = sortFunctions.lastNameToFirstLetter;
-        } else {
-          this.currentSortTableFunction = sortFunctions.lastNameToLastLetter;
-        }
-        this.renderManagement();
+        this.sortTableColumn(sortFunctions.lastNameToLastLetter, sortFunctions.lastNameToFirstLetter);
       }
 
       if (event.target.id === 'thead-First name') {
-        if (this.currentSortTableFunction === sortFunctions.firstNameToLastLetter) {
-          this.currentSortTableFunction = sortFunctions.firstNameToFirstLetter;
-        } else {
-          this.currentSortTableFunction = sortFunctions.firstNameToLastLetter;
-        }
-        this.renderManagement();
+        this.sortTableColumn(sortFunctions.firstNameToLastLetter, sortFunctions.firstNameToFirstLetter);
       }
 
       if (event.target.id === 'thead-Group') {
-        if (this.currentSortTableFunction === sortFunctions.groupToMax) {
-          this.currentSortTableFunction = sortFunctions.groupToMin;
-        } else {
-          this.currentSortTableFunction = sortFunctions.groupToMax;
-        }
-        this.renderManagement();
+        this.sortTableColumn(sortFunctions.groupToMax, sortFunctions.groupToMin);
       }
 
       if (event.target.id === 'thead-Age') {
-        if (this.currentSortTableFunction === sortFunctions.ageToMax) {
-          this.currentSortTableFunction = sortFunctions.ageToMin;
-        } else {
-          this.currentSortTableFunction = sortFunctions.ageToMax;
-        }
-        this.renderManagement();
+        this.sortTableColumn(sortFunctions.ageToMax, sortFunctions.ageToMin);
       }
 
       if (event.target.id === 'thead-Gender') {
-        if (this.currentSortTableFunction === sortFunctions.genderToMale) {
-          this.currentSortTableFunction = sortFunctions.genderToFemale;
-        } else {
-          this.currentSortTableFunction = sortFunctions.genderToMale;
-        }
-        this.renderManagement();
+        this.sortTableColumn(sortFunctions.genderToMale, sortFunctions.genderToFemale);
       }
     });
   }
@@ -318,5 +278,14 @@ export default class Portal {
     while (this.modalWindowContent.childNodes.length !== 2) {
       this.modalWindowContent.lastChild.remove();
     }
+  }
+
+  sortTableColumn(sortFuncToLastValue, sortFuncToFirstValue) {
+    if (this.currentSortTableFunction === sortFuncToLastValue) {
+      this.currentSortTableFunction = sortFuncToFirstValue;
+    } else {
+      this.currentSortTableFunction = sortFuncToLastValue;
+    }
+    this.renderManagement();
   }
 }
